@@ -406,6 +406,14 @@ static void set_zrange(Fl_Button *b, void *) {
     if(! strncmp(b->label(), "intensity", 2)) color_mode = 1;
     plot(frames+iframe0, frames+iframe1, frame_step);
 }
+static void save_pos(Fl_Button *b, void *) {
+    FILE *fp = fopen("lattice.dat", "wt");
+    float *ptr = plot_data;
+    for(int i = 0; i < point_count; i++, ptr+=4){
+        fprintf(fp, "%10.4f%10.4f%10.4f%10.4f\n", ptr[0], ptr[1], ptr[2], ptr[3]);
+    }
+    fclose(fp);
+}
 
 int main(int argc, char *argv[])
 {
@@ -525,6 +533,9 @@ int main(int argc, char *argv[])
         }
         o->end();
     }
+    vpos+=30;
+    Fl_Button *write_button = new Fl_Button(hpos, vpos, 50, 25, "save");
+    write_button->callback((Fl_Callback*) save_pos);
 
     window.end();
     window.show(argc, argv);
